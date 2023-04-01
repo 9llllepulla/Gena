@@ -1,0 +1,7 @@
+/.idea
+/.stack-work
+/out
+CHANGELOG.md
+*.iml
+*.txt
+stack.yaml.lock
