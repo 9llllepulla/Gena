@@ -4,4 +4,5 @@ import Generators
 
 main :: IO ()
 main = do
-  putStrLn "hello world"
+  print $ phonesGen 7 3
+  print $ randomPhoneGen 7 3

@@ -1,24 +1,36 @@
 module Generators
-  ( toFile,
-    phoneGen,
-    printArray
+  ( phonesGen,
+    randomPhoneGen,
   )
 where
 
-namesGen :: [String] -> [String] -> [String]
-namesGen names namePrefix = [prefix ++ " " ++ name | name <- names, prefix <- namePrefix]
+import System.Random
 
-phoneGen :: Int -> Int -> [String]
-phoneGen prefix count = map (\x -> show prefix ++ show x) (take count [100000000 ..])
+type PhonePrefix = Int
 
-printArray :: [String] -> IO ()
-printArray [] = putStrLn ""
-printArray (x : xs) = do
-  putStrLn x
-  printArray xs
+type Name = String
 
-toFile :: FilePath -> [String] -> IO ()
-toFile fileName [] = appendFile fileName ""
-toFile fileName (x : xs) = do
-  appendFile fileName (x ++ "\n")
-  toFile fileName xs
+type LastName = String
+
+-- генератор заданного количества случайных номеров телефонов с префиксом
+randomPhoneGen :: PhonePrefix -> Int -> [String]
+randomPhoneGen prefix cnt =
+  let phones = map abs $ random' prefix cnt
+      digits = phones `toStringByPrefix` prefix
+   in map (take 10) digits
+
+-- генератор заданного количества номеров телефонов по префиксу
+phonesGen :: PhonePrefix -> Int -> [String]
+phonesGen prefix count = toStringByPrefix (take count [100000000 ..]) prefix
+
+random' :: PhonePrefix -> Int -> [Int]
+random' p n =
+  let num = 31 * n + p
+  in take n (randoms $ mkStdGen num :: [Int])
+
+-- пересечение всех имен и фамилий
+cross :: [Name] -> [LastName] -> [String]
+cross names lastNames = [prefix ++ " " ++ name | name <- names, prefix <- lastNames]
+
+toStringByPrefix :: (Show a) => [a] -> Int -> [String]
+toStringByPrefix arr p = map (\x -> show p ++ show x) arr
