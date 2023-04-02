@@ -15,8 +15,8 @@ type LastName = String
 -- генератор заданного количества случайных номеров телефонов с префиксом
 randomPhoneGen :: PhonePrefix -> Int -> [String]
 randomPhoneGen prefix count =
-  let numbers = map abs $ rnd prefix count
-   in map (take 10) $ numbers `toStringByPrefix` prefix
+  let digits = map abs $ rnd prefix count
+   in map (take 10) $ digits `toStringByPrefix` prefix
 
 -- генератор заданного количества номеров телефонов по префиксу
 phonesGen :: PhonePrefix -> Int -> [String]
@@ -29,5 +29,5 @@ rnd prefix count = take count (randoms $ mkStdGen (prefix * count) :: [Int])
 cross :: [Name] -> [LastName] -> [String]
 cross names lastNames = [prefix ++ " " ++ name | name <- names, prefix <- lastNames]
 
-toStringByPrefix :: (Show a) => [a] -> Int -> [String]
-toStringByPrefix arr p = map (\x -> show p ++ show x) arr
+toStringByPrefix :: (Show a) => [a] -> a -> [String]
+toStringByPrefix arr prefix = map (\x -> show prefix ++ show x) arr
