@@ -14,17 +14,16 @@ type LastName = String
 
 -- генератор заданного количества случайных номеров телефонов с префиксом
 randomPhoneGen :: PhonePrefix -> Int -> [String]
-randomPhoneGen prefix cnt =
-  let phones = map abs $ rnd prefix cnt
-      digits = phones `toStringByPrefix` prefix
-   in map (take 10) digits
+randomPhoneGen prefix count =
+  let numbers = map abs $ rnd prefix count
+   in map (take 10) $ numbers `toStringByPrefix` prefix
 
 -- генератор заданного количества номеров телефонов по префиксу
 phonesGen :: PhonePrefix -> Int -> [String]
-phonesGen prefix count = toStringByPrefix (take count [100000000 ..]) prefix
+phonesGen prefix count = take count [100000000 ..] `toStringByPrefix` prefix
 
 rnd :: PhonePrefix -> Int -> [Int]
-rnd p n = take n (randoms $ mkStdGen (p * n) :: [Int])
+rnd prefix count = take count (randoms $ mkStdGen (prefix * count) :: [Int])
 
 -- пересечение всех имен и фамилий
 cross :: [Name] -> [LastName] -> [String]
