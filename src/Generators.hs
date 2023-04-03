@@ -6,6 +6,14 @@ where
 
 import System.Random
 
+class Generated a where
+  toString :: a -> String
+
+instance Generated PhoneNumber where
+  toString (PhoneNumber prefix number) = show prefix ++ show number
+
+data PhoneNumber = PhoneNumber PhonePrefix Int deriving (Show)
+
 type PhonePrefix = Int
 
 type Name = String
@@ -14,19 +22,19 @@ type LastName = String
 
 -- генератор заданного количества случайных номеров телефонов с префиксом
 randomPhoneGen :: PhonePrefix -> Int -> [String]
-randomPhoneGen prefix count =
-  let digits = map abs $ rnd prefix count
-   in map (take 10) $ digits `toStringWithPrefix` prefix
+randomPhoneGen prefix = map (take 10 . phoneWith prefix) . rndBy prefix
 
 -- генератор заданного количества номеров телефонов по префиксу
 phonesGen :: PhonePrefix -> Int -> [String]
-phonesGen prefix count = take count [100000000 ..] `toStringWithPrefix` prefix
+phonesGen prefix count = map (phoneWith prefix) $ take count [100000000 ..]
 
-rnd :: PhonePrefix -> Int -> [Int]
-rnd prefix count = take count (randoms $ mkStdGen (prefix * count) :: [Int])
+phoneWith :: PhonePrefix -> Int -> String
+phoneWith prefix = toString . PhoneNumber prefix
 
-toStringWithPrefix :: (Show a) => [a] -> a -> [String]
-toStringWithPrefix arr prefix = map (\x -> show prefix ++ show x) arr
+rndBy :: PhonePrefix -> Int -> [Int]
+rndBy prefix count =
+  let generated = randoms $ mkStdGen (prefix * count) :: [Int]
+   in map abs $ take count generated
 
 -- пересечение всех имен и фамилий
 cross :: [Name] -> [LastName] -> [String]
