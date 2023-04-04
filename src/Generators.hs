@@ -1,3 +1,12 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Generators
+-- Copyright   :  (c) Sergey Lyashko 2023
+-- License     :  see LICENSE
+--
+-- Generator for phone numbers by prefix
+--
+-----------------------------------------------------------------------------
 module Generators
   ( phonesGen,
     randomPhoneGen,

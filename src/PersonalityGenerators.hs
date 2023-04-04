@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  GHC.PersonalityGenerators
+-- Module      :  PersonalityGenerators
 -- Copyright   :  (c) Sergey Lyashko 2023
 -- License     :  see LICENSE
 --
