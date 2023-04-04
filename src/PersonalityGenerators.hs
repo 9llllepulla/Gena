@@ -14,7 +14,7 @@ module PersonalityGenerators
 where
 
 import Data.Char (toUpper)
-import Generators
+import PhoneGenerators
 import System.Random
 
 data FullName = FullName Name LastName deriving (Show)

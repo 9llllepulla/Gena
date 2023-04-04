@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Generators
+import PhoneGenerators
 import PersonalityGenerators
 
 main :: IO ()

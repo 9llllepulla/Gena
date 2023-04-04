@@ -7,7 +7,7 @@
 -- Generator for phone numbers by prefix
 --
 -----------------------------------------------------------------------------
-module Generators
+module PhoneGenerators
   ( phonesGen,
     randomPhoneGen,
     Generated (..)
