@@ -7,32 +7,40 @@
 -- Generator for personality full names
 -----------------------------------------------------------------------------
 
-module PersonalityGenerators
-  ( generation,
-    fullNameGen,
-    randomNumber
-  )
-where
+module PersonalityGenerators (fullNamesGen) where
 
 import Data.Char (toUpper)
 import PhoneGenerators
 import System.Random
 
-data FullName = FullName Name LastName deriving (Show)
-
 type Name = String
 
 type LastName = String
 
+type Amount = Int
+
+data FullName = FullName Name LastName deriving (Show)
+
 instance Generated FullName where
   toString (FullName name lastName) = capitalize name ++ " " ++ capitalize lastName
 
--- генерация случайного имени-фамилии
-fullNameGen :: Int -> String
-fullNameGen count =
-  let nameLen = byRange 2 6 (randomNumber count) 1
-      lastNameLen = byRange 2 9 (randomNumber (count + 1)) 1
-   in generation (nameLen, lastNameLen)
+capitalize :: String -> String
+capitalize [] = []
+capitalize (x : xs) = toUpper x : xs
+
+-- генерация списка уникальных случайных имени-фамилии
+fullNamesGen :: Amount -> [String]
+fullNamesGen amount = uniqueFilter . map (toString . nameGen) $ take amount [1 ..]
+
+uniqueFilter :: [String] -> [String]
+uniqueFilter [] = []
+uniqueFilter (x : xs) = x : uniqueFilter (filter (/= x) xs)
+
+nameGen :: Int -> FullName
+nameGen offset =
+  let nameLen = byRange 2 6 (randomNumber offset) 1
+      lastNameLen = byRange 2 9 (randomNumber (offset + 1)) 1
+   in generationFullName (nameLen, lastNameLen)
 
 byRange :: Int -> Int -> Int -> Int -> Int
 byRange low high num i
@@ -42,22 +50,14 @@ byRange low high num i
 randomNumber :: Int -> Int
 randomNumber offset =
   let numbers = randoms $ mkStdGen offset :: [Int]
-      twoNumAsStr = take 1 . show $ map abs numbers !! 1
+      twoNumAsStr = take 1 . show $ map abs numbers !! offset
    in read twoNumAsStr :: Int
 
-generation :: (Int, Int) -> String
-generation (nameLen, lastNameLen) =
-  let name = randomWord nameLen $ nameLen + lastNameLen
-      lastName = randomWord lastNameLen $ lastNameLen * nameLen
-   in toString $ FullName name lastName
+generationFullName :: (Int, Int) -> FullName
+generationFullName (nameLen, lastNameLen) =
+  let name = randomAnyName nameLen $ nameLen + lastNameLen
+      lastName = randomAnyName lastNameLen $ lastNameLen * nameLen
+   in FullName name lastName
 
-capitalize :: String -> String
-capitalize [] = []
-capitalize (x : xs) = toUpper x : xs
-
-randomWord :: Int -> Int -> String
-randomWord charsCount offset = take charsCount (randomRs ('a', 'z') $ mkStdGen $ charsCount * offset)
-
--- пересечение всех имен и фамилий
-cross :: [Name] -> [LastName] -> [String]
-cross names lastNames = [toString (FullName name lastName :: FullName) | name <- names, lastName <- lastNames]
+randomAnyName :: Int -> Int -> String
+randomAnyName charsCount offset = take charsCount (randomRs ('a', 'z') $ mkStdGen $ charsCount * offset)
