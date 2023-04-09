@@ -14,6 +14,7 @@ module PhoneGenerators
   )
 where
 
+import GeneratorUtils
 import System.Random
 
 class Generated a where
@@ -26,9 +27,10 @@ data PhoneNumber = PhoneNumber PhonePrefix Int deriving (Show)
 
 type PhonePrefix = Int
 
--- генератор заданного количества случайных номеров телефонов с префиксом
+-- todo сделать чтобы указанное количество совпадало с отфильтрованным
+-- генератор заданного количества уникальных случайных номеров телефонов с префиксом
 randomPhoneGen :: PhonePrefix -> Int -> [String]
-randomPhoneGen prefix = map (take 10 . phoneWith prefix) . randomNumbers prefix
+randomPhoneGen prefix = uniqueFilter . map (take 10 . phoneWith prefix) . randomNumbers prefix
 
 -- генератор заданного количества номеров телефонов по префиксу
 phonesGen :: PhonePrefix -> Int -> [String]

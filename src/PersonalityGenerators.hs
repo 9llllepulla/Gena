@@ -9,6 +9,7 @@
 
 module PersonalityGenerators (fullNamesGen) where
 
+import GeneratorUtils  
 import Data.Char (toUpper)
 import PhoneGenerators
 import System.Random
@@ -28,13 +29,10 @@ capitalize :: String -> String
 capitalize [] = []
 capitalize (x : xs) = toUpper x : xs
 
+-- todo сделать чтобы указанное количество совпадало с отфильтрованным
 -- генерация списка уникальных случайных имени-фамилии
 fullNamesGen :: Amount -> [String]
 fullNamesGen amount = uniqueFilter . map (toString . nameGen) $ take amount [1 ..]
-
-uniqueFilter :: [String] -> [String]
-uniqueFilter [] = []
-uniqueFilter (x : xs) = x : uniqueFilter (filter (/= x) xs)
 
 nameGen :: Int -> FullName
 nameGen offset =
