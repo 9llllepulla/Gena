@@ -18,8 +18,6 @@ type Name = String
 
 type LastName = String
 
-type Amount = Int
-
 data FullName = FullName Name LastName deriving (Show)
 
 instance Generated FullName where
@@ -29,10 +27,9 @@ capitalize :: String -> String
 capitalize [] = []
 capitalize (x : xs) = toUpper x : xs
 
--- todo сделать чтобы указанное количество совпадало с отфильтрованным
 -- генерация списка уникальных случайных имени-фамилии
 fullNamesGen :: Amount -> [String]
-fullNamesGen amount = uniqueFilter . map (toString . nameGen) $ take amount [1 ..]
+fullNamesGen amount = take amount $ uniqueFilter . map (toString . nameGen) $ take (amount + 10) [1 ..]
 
 nameGen :: Int -> FullName
 nameGen offset =
@@ -57,5 +54,5 @@ generationFullName (nameLen, lastNameLen) =
       lastName = randomAnyName lastNameLen $ lastNameLen * nameLen
    in FullName name lastName
 
-randomAnyName :: Int -> Int -> String
-randomAnyName charsCount offset = take charsCount (randomRs ('a', 'z') $ mkStdGen $ charsCount * offset)
+randomAnyName :: Amount -> Int -> String
+randomAnyName charsAmount offset = take charsAmount (randomRs ('a', 'z') $ mkStdGen $ charsAmount * offset)

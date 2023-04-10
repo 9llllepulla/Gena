@@ -27,19 +27,21 @@ data PhoneNumber = PhoneNumber PhonePrefix Int deriving (Show)
 
 type PhonePrefix = Int
 
--- todo сделать чтобы указанное количество совпадало с отфильтрованным
 -- генератор заданного количества уникальных случайных номеров телефонов с префиксом
-randomPhoneGen :: PhonePrefix -> Int -> [String]
-randomPhoneGen prefix = uniqueFilter . map (take 10 . phoneWith prefix) . randomNumbers prefix
+randomPhoneGen :: PhonePrefix -> Amount -> [String]
+randomPhoneGen prefix amount = 
+  let nums = randomNumbers prefix amount
+      numsAsStr = map (take 10 . phoneWith prefix) nums
+   in take amount $ uniqueFilter numsAsStr
 
 -- генератор заданного количества номеров телефонов по префиксу
-phonesGen :: PhonePrefix -> Int -> [String]
-phonesGen prefix count = map (phoneWith prefix) $ take count [100000000 ..]
+phonesGen :: PhonePrefix -> Amount -> [String]
+phonesGen prefix amount = map (phoneWith prefix) $ take amount [100000000 ..]
 
 phoneWith :: PhonePrefix -> Int -> String
 phoneWith prefix = toString . PhoneNumber prefix
 
-randomNumbers :: PhonePrefix -> Int -> [Int]
-randomNumbers prefix count =
-  let generated = randoms $ mkStdGen (prefix * count) :: [Int]
-   in map abs $ take count generated
+randomNumbers :: PhonePrefix -> Amount -> [Int]
+randomNumbers prefix amount =
+  let generated = randoms $ mkStdGen (prefix * amount) :: [Int]
+   in map abs $ take (amount + 10) generated
