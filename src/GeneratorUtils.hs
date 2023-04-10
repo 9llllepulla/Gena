@@ -7,7 +7,13 @@
 -- Util methods for any generators
 -----------------------------------------------------------------------------
 
-module GeneratorUtils (uniqueFilter) where
+module GeneratorUtils
+  ( uniqueFilter,
+    Amount,
+  )
+where
+
+type Amount = Int
 
 uniqueFilter :: (Eq a) => [a] -> [a]
 uniqueFilter [] = []
