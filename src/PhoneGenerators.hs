@@ -8,7 +8,7 @@
 --
 -----------------------------------------------------------------------------
 module PhoneGenerators
-  ( phonesGen,
+  ( orderedPhonesGen,
     randomPhoneGen,
     PhonePrefix,
     Amount,
@@ -41,8 +41,8 @@ randomPhoneGen prefix amount offset =
    in take amount $ uniqueFilter $ map (take 11 . phoneWith prefix) nums
 
 -- генератор заданного количества номеров телефонов по префиксу
-phonesGen :: PhonePrefix -> Amount -> [String]
-phonesGen prefix amount = map (phoneWith prefix) $ take amount [100000000 ..]
+orderedPhonesGen :: PhonePrefix -> Amount -> [String]
+orderedPhonesGen prefix amount = map (phoneWith prefix) $ take amount [100000000 ..]
 
 phoneWith :: PhonePrefix -> Int -> String
 phoneWith prefix = toString . PhoneNumber prefix
