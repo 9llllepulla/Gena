@@ -1,27 +1,36 @@
 module Output
-  ( saveToFile,
-    printRandomPhones
+  ( printOnConsole,
+    printToFile,
   )
 where
 
 import Data.Time
 import PhoneGenerators
 
+-- генерация случайных номеров с выводом в файл
+printToFile :: PhonePrefix -> Amount -> FilePath -> IO ()
+printToFile pref amount path =
+  let toFileFunc = toFile path
+   in printRandomPhones pref amount toFileFunc
+
 -- генерация случайных номеров с выводом на консоль
-printRandomPhones :: PhonePrefix -> Amount -> IO ()
-printRandomPhones pref amount = do
+printOnConsole :: PhonePrefix -> Amount -> IO ()
+printOnConsole pref amount = printRandomPhones pref amount onConsole
+
+printRandomPhones :: PhonePrefix -> Amount -> ([String] -> IO ()) -> IO ()
+printRandomPhones pref amount ioFunc = do
   time <- getCurrentTime
   let offset = takeWhile (/= ' ') $ drop 20 $ show time
-  printArray $ randomPhoneGen pref amount (read offset :: Int)
+  ioFunc $ randomPhoneGen pref amount (read offset :: Int)
 
-printArray :: [String] -> IO ()
-printArray [] = putStrLn ""
-printArray (x : xs) = do
+onConsole :: [String] -> IO ()
+onConsole [] = putStrLn ""
+onConsole (x : xs) = do
   putStrLn x
-  printArray xs
+  onConsole xs
 
-saveToFile :: FilePath -> [String] -> IO ()
-saveToFile fileName [] = appendFile fileName ""
-saveToFile fileName (x : xs) = do
+toFile :: FilePath -> [String] -> IO ()
+toFile fileName [] = appendFile fileName ""
+toFile fileName (x : xs) = do
   appendFile fileName (x ++ "\n")
-  saveToFile fileName xs
+  toFile fileName xs
