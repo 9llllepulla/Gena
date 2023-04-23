@@ -32,12 +32,13 @@ type PhonePrefix = Int
 
 type Offset = Int
 
+type Amount = Int
+
 -- генератор заданного количества уникальных случайных номеров телефонов с префиксом по коэффициенту смещения
 randomPhoneGen :: PhonePrefix -> Amount -> Offset -> [String]
 randomPhoneGen prefix amount offset = 
   let nums = randomNumbers offset amount
-      numsAsStr = map (take 11 . phoneWith prefix) nums
-   in take amount $ uniqueFilter numsAsStr
+   in take amount $ uniqueFilter $ map (take 11 . phoneWith prefix) nums
 
 -- генератор заданного количества номеров телефонов по префиксу
 phonesGen :: PhonePrefix -> Amount -> [String]
