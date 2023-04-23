@@ -1,21 +1,27 @@
 module Output
-  ( printOnConsole,
-    printToFile,
+  ( printRandomPhonesOnConsole,
+    printRandomPhonesToFile,
+    printOrderedPhonesToConsole
   )
 where
 
 import Data.Time
 import PhoneGenerators
 
+-- генерация упорядоченных номеров с выводом на консоль
+printOrderedPhonesToConsole :: PhonePrefix -> Amount -> IO ()
+printOrderedPhonesToConsole pref amount = onConsole $ orderedPhonesGen pref amount
+
+
 -- генерация случайных номеров с выводом в файл
-printToFile :: PhonePrefix -> Amount -> FilePath -> IO ()
-printToFile pref amount path =
+printRandomPhonesToFile :: PhonePrefix -> Amount -> FilePath -> IO ()
+printRandomPhonesToFile pref amount path =
   let toFileFunc = toFile path
    in printRandomPhones pref amount toFileFunc
 
 -- генерация случайных номеров с выводом на консоль
-printOnConsole :: PhonePrefix -> Amount -> IO ()
-printOnConsole pref amount = printRandomPhones pref amount onConsole
+printRandomPhonesOnConsole :: PhonePrefix -> Amount -> IO ()
+printRandomPhonesOnConsole pref amount = printRandomPhones pref amount onConsole
 
 printRandomPhones :: PhonePrefix -> Amount -> ([String] -> IO ()) -> IO ()
 printRandomPhones pref amount ioFunc = do
