@@ -1,12 +1,8 @@
 module Main (main) where
 
-import PhoneGenerators
-import PersonalityGenerators
+import PhoneOutput
 
 main :: IO ()
 main = do
-  print $ phonesGen 7 3
-  print $ randomPhoneGen 7 3
-  print $ fullNamesGen 9
- 
-
+  printRandomPhonesOnConsole 7 3
+  printRandomPhonesToFile 7 3 "3_mobile.txt"
