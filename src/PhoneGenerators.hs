@@ -10,6 +10,9 @@
 module PhoneGenerators
   ( phonesGen,
     randomPhoneGen,
+    PhonePrefix,
+    Amount,
+    Offset,
     Generated (..)
   )
 where
@@ -27,11 +30,13 @@ data PhoneNumber = PhoneNumber PhonePrefix Int deriving (Show)
 
 type PhonePrefix = Int
 
--- генератор заданного количества уникальных случайных номеров телефонов с префиксом
-randomPhoneGen :: PhonePrefix -> Amount -> [String]
-randomPhoneGen prefix amount = 
-  let nums = randomNumbers prefix amount
-      numsAsStr = map (take 10 . phoneWith prefix) nums
+type Offset = Int
+
+-- генератор заданного количества уникальных случайных номеров телефонов с префиксом по коэффициенту смещения
+randomPhoneGen :: PhonePrefix -> Amount -> Offset -> [String]
+randomPhoneGen prefix amount offset = 
+  let nums = randomNumbers offset amount
+      numsAsStr = map (take 11 . phoneWith prefix) nums
    in take amount $ uniqueFilter numsAsStr
 
 -- генератор заданного количества номеров телефонов по префиксу
@@ -41,7 +46,7 @@ phonesGen prefix amount = map (phoneWith prefix) $ take amount [100000000 ..]
 phoneWith :: PhonePrefix -> Int -> String
 phoneWith prefix = toString . PhoneNumber prefix
 
-randomNumbers :: PhonePrefix -> Amount -> [Int]
-randomNumbers prefix amount =
-  let generated = randoms $ mkStdGen (prefix * amount) :: [Int]
+randomNumbers :: Int -> Amount -> [Int]
+randomNumbers offset amount =
+  let generated = randoms $ mkStdGen offset :: [Int]
    in map abs $ take (amount + 10) generated
