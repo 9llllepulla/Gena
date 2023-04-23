@@ -8,12 +8,9 @@
 -----------------------------------------------------------------------------
 
 module GeneratorUtils
-  ( uniqueFilter,
-    Amount,
+  ( uniqueFilter
   )
 where
-
-type Amount = Int
 
 uniqueFilter :: (Eq a) => [a] -> [a]
 uniqueFilter [] = []
