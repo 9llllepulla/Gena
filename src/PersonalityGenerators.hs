@@ -31,7 +31,7 @@ capitalize (x : xs) = toUpper x : xs
 fullNamesGen :: Amount -> [String]
 fullNamesGen amount = take amount $ uniqueFilter . map (toString . nameGen) $ take (amount + 10) [1 ..]
 
-nameGen :: Int -> FullName
+nameGen :: Offset -> FullName
 nameGen offset =
   let nameLen = byRange 2 6 (randomNumber offset) 1
       lastNameLen = byRange 2 9 (randomNumber (offset + 1)) 1
