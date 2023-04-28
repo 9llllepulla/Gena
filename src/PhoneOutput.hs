@@ -8,6 +8,7 @@ where
 
 import Data.Time
 import PhoneGenerators
+import GeneratorUtils
 
 -- генерация упорядоченных номеров с выводом в файл
 printOrderedPhonesToFile :: PhonePrefix -> Amount -> FilePath -> IO ()
