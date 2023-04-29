@@ -10,8 +10,10 @@
 module GeneratorUtils
   ( uniqueFilter,
     randomNumbers,
+    randomNumberByRange,
     Amount,
-    Offset
+    Offset,
+    Range
   )
 where
   
@@ -19,7 +21,11 @@ import System.Random
   
 type Offset = Int
 
-type Amount = Int  
+type Amount = Int
+
+type DigitsAmount = Int
+
+type Range = (Int, Int)
 
 uniqueFilter :: (Eq a) => [a] -> [a]
 uniqueFilter [] = []
@@ -29,3 +35,19 @@ randomNumbers :: Offset -> Amount -> [Int]
 randomNumbers offset amount =
   let generated = randoms $ mkStdGen offset :: [Int]
    in map abs $ take amount generated
+
+randomNumberByRange :: Range -> Offset -> Int
+randomNumberByRange range offset =
+  let digits = length $ show $ fst range
+      numByRange = randomNumber offset digits
+   in byRange range offset numByRange
+
+byRange :: Range -> Offset -> Int -> Int
+byRange (l, h) offset number
+ | number >= l && number <= h = number
+ | otherwise = randomNumberByRange (l, h) (offset + 1)
+
+randomNumber :: Offset -> DigitsAmount -> Int
+randomNumber offset digitsAmount = 
+  let numAsStr = take digitsAmount . show $ head (randomNumbers offset offset)
+   in read numAsStr :: Int
