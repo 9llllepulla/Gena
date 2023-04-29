@@ -7,7 +7,7 @@
 -- Generator for personality full names
 -----------------------------------------------------------------------------
 
-module PersonalityGenerators (fullNamesGen) where
+module PersonalityGenerators (fullNamesGen, randomBirthDay, generationFullName) where
 
 import GeneratorUtils  
 import Data.Char (toUpper)
@@ -18,41 +18,42 @@ type Name = String
 
 type LastName = String
 
-data FullName = FullName Name LastName deriving (Show)
+type BirthDay = String
+
+data FullName = FullName Name LastName BirthDay deriving (Show)
 
 instance Generated FullName where
-  toString (FullName name lastName) = capitalize name ++ " " ++ capitalize lastName
+  toString (FullName name lastName birthDay) = capitalize name ++ "," ++ capitalize lastName ++ "," ++ birthDay
 
 capitalize :: String -> String
 capitalize [] = []
 capitalize (x : xs) = toUpper x : xs
 
 -- генерация списка уникальных случайных имени-фамилии
-fullNamesGen :: Amount -> [String]
-fullNamesGen amount = take amount $ uniqueFilter . map (toString . nameGen) $ take (amount + 10) [1 ..]
+fullNamesGen :: Range -> Amount -> Offset -> [String]
+fullNamesGen range amount offset = 
+  let numbers = take (amount + 10) [1 ..]
+   in take amount $ uniqueFilter . map (\x -> toString $ fullNameGen range (x + offset))  $ numbers -- TODO исправить смещение 
 
-nameGen :: Offset -> FullName
-nameGen offset =
-  let nameLen = byRange 2 6 (randomNumber offset) 1
-      lastNameLen = byRange 2 9 (randomNumber (offset + 1)) 1
-   in generationFullName (nameLen, lastNameLen)
+fullNameGen :: Range -> Offset -> FullName
+fullNameGen range offset =
+  let nameLen = randomNumberByRange (3, 7) offset
+      lastNameLen = randomNumberByRange (3, 9) (offset + 1)
+   in generationFullName range (nameLen, lastNameLen) offset
 
-byRange :: Int -> Int -> Int -> Int -> Int
-byRange low high num i
- | num >= low && num <= high = num
- | otherwise = byRange low high (randomNumber num) (i + 1)
+generationFullName :: Range -> (Int, Int) -> Offset -> FullName
+generationFullName range (nameLen, lastNameLen) offset =
+  let name = randomAnyName nameLen offset
+      lastName = randomAnyName lastNameLen (offset + 1)
+      birthDay = randomBirthDay range (offset + 2)
+   in FullName name lastName birthDay
 
-randomNumber :: Int -> Int
-randomNumber offset =
-  let numbers = randoms $ mkStdGen offset :: [Int]
-      twoNumAsStr = take 1 . show $ map abs numbers !! offset
-   in read twoNumAsStr :: Int
-
-generationFullName :: (Int, Int) -> FullName
-generationFullName (nameLen, lastNameLen) =
-  let name = randomAnyName nameLen $ nameLen + lastNameLen
-      lastName = randomAnyName lastNameLen $ lastNameLen * nameLen
-   in FullName name lastName
-
-randomAnyName :: Amount -> Int -> String
+randomAnyName :: Amount -> Offset -> String
 randomAnyName charsAmount offset = take charsAmount (randomRs ('a', 'z') $ mkStdGen $ charsAmount * offset)
+
+randomBirthDay :: Range -> Offset -> String
+randomBirthDay range offset =
+  let day = take 2 $ show $ randomNumberByRange (1, 30) offset
+      month = take 2 $ show $ randomNumberByRange (1, 12) (offset + 1)
+      year = take 4 $ show $ randomNumberByRange range (offset + 2)
+   in day ++ "." ++ month ++ "." ++ year
